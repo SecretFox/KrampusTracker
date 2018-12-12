@@ -1,5 +1,6 @@
 import com.GameInterface.Game.Dynel;
 import com.GameInterface.Nametags;
+import com.GameInterface.UtilsBase;
 import com.GameInterface.Waypoint;
 import com.GameInterface.WaypointInterface;
 import com.Utils.ID32;
@@ -40,18 +41,21 @@ class fox.KrampusTracker.KrampusTracker {
 	}
 
 	public function OnLoad() {
-		m_dynels = [];
-		m_swfRoot.onEnterFrame = Delegate.create(this, OnFrame);
+		if (UtilsBase.GetGameTweak("Seasonal_SWL_Christmas2017")){
+			m_dynels = [];
+			m_swfRoot.onEnterFrame = Delegate.create(this, OnFrame);
 
-		m_screenWidth = Stage["visibleRect"].width;
+			m_screenWidth = Stage["visibleRect"].width;
 
-		Nametags.SignalNametagAdded.Connect(Add, this);
-		Nametags.SignalNametagRemoved.Connect(Remove, this);
-		Nametags.SignalNametagUpdated.Connect(Add, this);
+			Nametags.SignalNametagAdded.Connect(Add, this);
+			Nametags.SignalNametagRemoved.Connect(Remove, this);
+			Nametags.SignalNametagUpdated.Connect(Add, this);
 
-		Nametags.RefreshNametags();
+			Nametags.RefreshNametags();
 
-		WaypointInterface.SignalPlayfieldChanged.Connect(PlayFieldChanged, this);
+			WaypointInterface.SignalPlayfieldChanged.Connect(PlayFieldChanged, this);
+		}
+
 	}
 
 	private function OnFrame() {
