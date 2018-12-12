@@ -1,5 +1,8 @@
-class com.fox.KrampusTracker.Utils
-{
+/**
+ * ...
+ * @author Joshua Shaffer
+ */
+class com.fox.KrampusTracker.Utils{
     public static function Contains(array:Array, target):Boolean
     {
         for (var i:Number = 0 ; i < array.length ; i++)
@@ -37,4 +40,5 @@ class com.fox.KrampusTracker.Utils
 		
 		return false;
 	}
+	
 }

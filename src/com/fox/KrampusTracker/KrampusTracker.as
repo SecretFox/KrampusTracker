@@ -12,18 +12,7 @@ class fox.KrampusTracker.KrampusTracker {
 	private var m_swfRoot: MovieClip;
 	private var m_dynels:Array;
 	private var m_screenWidth:Number;
-	private var KrampiArray:Array = [
-		LDBFormat.LDBGetText(51000, 38190),
-		LDBFormat.LDBGetText(51000, 38188),
-		LDBFormat.LDBGetText(51000, 38195),
-		LDBFormat.LDBGetText(51000, 38199),
-		LDBFormat.LDBGetText(51000, 38184),
-		LDBFormat.LDBGetText(51000, 38194),
-		LDBFormat.LDBGetText(51000, 38185),
-		LDBFormat.LDBGetText(51000, 38177),
-		LDBFormat.LDBGetText(51000, 38179),
-		LDBFormat.LDBGetText(51000, 33735)
-	]
+	private var KrampiString:String = LDBFormat.LDBGetText(51000, 33735)
 
 	public static function main(swfRoot:MovieClip):Void {
 		var Mod = new KrampusTracker(swfRoot);
@@ -40,7 +29,7 @@ class fox.KrampusTracker.KrampusTracker {
 		m_swfRoot.onEnterFrame = undefined;
 
 		Nametags.SignalNametagAdded.Disconnect(Add, this);
-		Nametags.SignalNametagRemoved.Disconnect(Add, this);
+		Nametags.SignalNametagRemoved.Disconnect(Remove, this);
 		Nametags.SignalNametagUpdated.Disconnect(Add, this);
 
 		WaypointInterface.SignalPlayfieldChanged.Disconnect(PlayFieldChanged, this);
@@ -57,7 +46,7 @@ class fox.KrampusTracker.KrampusTracker {
 		m_screenWidth = Stage["visibleRect"].width;
 
 		Nametags.SignalNametagAdded.Connect(Add, this);
-		Nametags.SignalNametagRemoved.Connect(Add, this);
+		Nametags.SignalNametagRemoved.Connect(Remove, this);
 		Nametags.SignalNametagUpdated.Connect(Add, this);
 
 		Nametags.RefreshNametags();
@@ -68,11 +57,11 @@ class fox.KrampusTracker.KrampusTracker {
 	private function OnFrame() {
 		for (var i in m_dynels) {
 			var dynel:Dynel = m_dynels[i];
-			if (!ShouldWatch(dynel)) {
+			if (dynel.IsDead()){
 				Remove(dynel);
 				return;
 			}
-
+			
 			var waypoint/*:ScreenWaypoint*/ = _root.waypoints.m_RenderedWaypoints[dynel.GetID()];
 			waypoint.m_Waypoint.m_DistanceToCam = dynel.GetCameraDistance();
 			var screenPosition:Point = dynel.GetScreenPosition();
@@ -87,7 +76,7 @@ class fox.KrampusTracker.KrampusTracker {
         var dynel:Dynel = Dynel.GetDynel(id);
 		if (Utils.Contains(m_dynels, dynel)) return; //Already tracking
 
-		if (ShouldWatch(dynel)) {
+		if (dynel.GetName() == KrampiString) {
 			var waypoint:Waypoint = new Waypoint();
 			waypoint.m_WaypointType = _global.Enums.WaypointType.e_RMWPScannerBlip;
 			waypoint.m_WaypointState = _global.Enums.QuestWaypointState.e_WPStateActive;
@@ -109,8 +98,8 @@ class fox.KrampusTracker.KrampusTracker {
 
 			_root.waypoints.m_CurrentPFInterface.m_Waypoints[dynel.GetID().toString()] = waypoint;
 			_root.waypoints.m_CurrentPFInterface.SignalWaypointAdded.Emit(waypoint.m_Id);
-
 			m_dynels.push(dynel);
+
 		}
 	}
 
@@ -118,10 +107,6 @@ class fox.KrampusTracker.KrampusTracker {
 		Utils.Remove(m_dynels, dynel);
 		delete _root.waypoints.m_CurrentPFInterface.m_Waypoints[dynel.GetID().toString];
 		_root.waypoints.m_CurrentPFInterface.SignalWaypointRemoved.Emit(dynel.GetID());
-	}
-
-	private function ShouldWatch(dynel:Dynel): Boolean {
-		return Utils.Contains(KrampiArray, dynel.GetName());
 	}
 	
 	private function PlayFieldChanged() {
