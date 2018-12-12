@@ -57,9 +57,9 @@ class fox.KrampusTracker.KrampusTracker {
 	private function OnFrame() {
 		for (var i in m_dynels) {
 			var dynel:Dynel = m_dynels[i];
-			if (dynel.IsDead()){
+			if (dynel.IsDead() || !dynel.GetDistanceToPlayer()){
 				Remove(dynel);
-				return;
+				continue;
 			}
 			
 			var waypoint/*:ScreenWaypoint*/ = _root.waypoints.m_RenderedWaypoints[dynel.GetID()];
