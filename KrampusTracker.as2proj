@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\MobMarkers.swf" />
+    <movie path="bin\KrampusTracker.swf" />
     <movie fps="30" />
     <movie width="1000" />
     <movie height="800" />
@@ -39,6 +39,8 @@
     <compile path="src\xeio\HotkeyManager.as" />
     <compile path="src\com\xeio\HotkeyManager.as" />
     <compile path="src\com\xeio\MobMarkers\MobMarkers.as" />
+    <compile path="src\com\fox\MobMarkers\KrampusTracker.as" />
+    <compile path="src\com\fox\KrampusTracker\KrampusTracker.as" />
   </compileTargets>
   <!-- Assets to embed into the output SWF -->
   <library>
@@ -51,17 +53,15 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">xcopy "$(ProjectDir)\deployment\Flash\*.*" "C:\Program Files (x86)\Funcom\Secret World Legends\Data\Gui\Custom\Flash\" /e /y
+  <postBuildCommand alwaysRun="False">xcopy "$(ProjectDir)\bin\*.*" "G:\Secret World Legends\Data\Gui\Custom\Flash\KrampusTracker\*.*" /e /y
+xcopy "$(ProjectDir)\src\mod\*.*" "G:\Secret World Legends\Data\Gui\Custom\Flash\KrampusTracker\*.*" /e /y
 
-xcopy "$(ProjectDir)\deployment\Scripts\*.*" "C:\Program Files (x86)\Funcom\Secret World Legends\Scripts\" /e /y
-
-xcopy "$(ProjectDir)\src\mod\*.*" "C:\Program Files (x86)\Funcom\Secret World Legends\Data\Gui\Custom\Flash\$(ProjectName)\" /e /y
-
-xcopy "$(OutputFile)" "C:\Program Files (x86)\Funcom\Secret World Legends\Data\Gui\Custom\Flash\$(ProjectName)\" /e /y</postBuildCommand>
+xcopy "$(ProjectDir)\bin\*.*" "./deployment/KrampusTracker/*.*" /e /y
+xcopy "$(ProjectDir)\src\mod\*.*" "./deployment/KrampusTracker/*.*" /e /y</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />
-    <option testMovie="Default" />
+    <option testMovie="Custom" />
     <option testMovieCommand="" />
   </options>
   <!-- Plugin storage -->

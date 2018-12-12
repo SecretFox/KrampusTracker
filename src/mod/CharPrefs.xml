@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?> 
 <Root>
-  <Value name="MobMarkers" value="true" />
-  <Value name="MobMarkers_Zones" value="7670,3155" />
-  <Archive name="MobMarkers_Cfg" />
+  <Value name="KrampusTracker" value="true" />
 </Root>

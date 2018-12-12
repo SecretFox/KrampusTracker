@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <Root>
-<Module  name = "MobMarkers"
-	movie       = "MobMarkers\MobMarkers.swf"
-	flags       = "GMF_CFG_STORE_USER_CONFIG"
+<Module  name = "KrampusTracker"
+	movie       = "KrampusTracker\KrampusTracker.swf"
+	flags       = ""
 	depth_layer = "Top"
 	sub_depth   = "2"
-	variable    = "MobMarkers"
-	criteria    = "MobMarkers &amp;&amp; (guimode &amp; (GUIMODEFLAGS_INPLAY | GUIMODEFLAGS_ENABLEALLGUI))"
-	config_name = "MobMarkers_Cfg"
+	variable    = "KrampusTracker"
+	criteria    = "KrampusTracker &amp;&amp; (guimode &amp; (GUIMODEFLAGS_INPLAY | GUIMODEFLAGS_ENABLEALLGUI))"
 	/>
 </Root>

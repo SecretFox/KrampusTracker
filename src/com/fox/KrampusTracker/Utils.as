@@ -1,4 +1,4 @@
-class com.xeio.MobMarkers.Utils
+class com.fox.KrampusTracker.Utils
 {
     public static function Contains(array:Array, target):Boolean
     {
