@@ -35,7 +35,7 @@ class fox.KrampusTracker.KrampusTracker {
 		WaypointInterface.SignalPlayfieldChanged.Disconnect(PlayFieldChanged, this);
 
 		for (var i in m_dynels) {
-			Remove(m_dynels[i]);
+			Remove(m_dynels[i].GetID());
 		}
 	}
 
@@ -58,7 +58,7 @@ class fox.KrampusTracker.KrampusTracker {
 		for (var i in m_dynels) {
 			var dynel:Dynel = m_dynels[i];
 			if (dynel.IsDead() || !dynel.GetDistanceToPlayer()){
-				Remove(dynel);
+				Remove(dynel.GetID());
 				continue;
 			}
 			
@@ -103,14 +103,21 @@ class fox.KrampusTracker.KrampusTracker {
 		}
 	}
 
-	private function Remove(dynel:Dynel) {
-		Utils.Remove(m_dynels, dynel);
-		delete _root.waypoints.m_CurrentPFInterface.m_Waypoints[dynel.GetID().toString];
-		_root.waypoints.m_CurrentPFInterface.SignalWaypointRemoved.Emit(dynel.GetID());
+	private function Remove(id:ID32) {
+		for (var i in m_dynels){
+			if (m_dynels[i].GetID() == id){
+				Utils.Remove(m_dynels, m_dynels[i]);
+				delete _root.waypoints.m_CurrentPFInterface.m_Waypoints[id.toString];
+				_root.waypoints.m_CurrentPFInterface.SignalWaypointRemoved.Emit(id.toString());
+				break;
+			}
+		}
 	}
 	
 	private function PlayFieldChanged() {
-		m_dynels = [];
+		for (var i in m_dynels) {
+			Remove(m_dynels[i].GetID());
+		}
 	}
 
 }
