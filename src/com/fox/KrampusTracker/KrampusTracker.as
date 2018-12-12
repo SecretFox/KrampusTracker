@@ -1,3 +1,4 @@
+import com.GameInterface.Game.Character;
 import com.GameInterface.Game.Dynel;
 import com.GameInterface.Nametags;
 import com.GameInterface.UtilsBase;
@@ -13,7 +14,8 @@ class fox.KrampusTracker.KrampusTracker {
 	private var m_swfRoot: MovieClip;
 	private var m_dynels:Array;
 	private var m_screenWidth:Number;
-	private var KrampiString:String = LDBFormat.LDBGetText(51000, 33735)
+	private var KrampiString:String = LDBFormat.LDBGetText(51000, 33735);
+	private var EnabledZones:Array = [3030, 3040, 3050, 3090, 3100, 3120, 3130, 3140];
 
 	public static function main(swfRoot:MovieClip):Void {
 		var Mod = new KrampusTracker(swfRoot);
@@ -36,34 +38,46 @@ class fox.KrampusTracker.KrampusTracker {
 		WaypointInterface.SignalPlayfieldChanged.Disconnect(PlayFieldChanged, this);
 
 		for (var i in m_dynels) {
-			Remove(m_dynels[i].GetID());
+			Remove(m_dynels[i]);
 		}
 	}
-
 	public function OnLoad() {
 		if (UtilsBase.GetGameTweak("Seasonal_SWL_Christmas2017")){
 			m_dynels = [];
-			m_swfRoot.onEnterFrame = Delegate.create(this, OnFrame);
-
 			m_screenWidth = Stage["visibleRect"].width;
-
-			Nametags.SignalNametagAdded.Connect(Add, this);
-			Nametags.SignalNametagRemoved.Connect(Remove, this);
-			Nametags.SignalNametagUpdated.Connect(Add, this);
-
-			Nametags.RefreshNametags();
-
 			WaypointInterface.SignalPlayfieldChanged.Connect(PlayFieldChanged, this);
+			PlayFieldChanged();
 		}
-
+	}
+	
+	private function PlayFieldChanged(){
+		for (var i in m_dynels) {
+			Remove(m_dynels[i]);
+		}
+		if (EnabledPlayfield()){
+			m_swfRoot.onEnterFrame = Delegate.create(this, OnFrame);
+			Nametags.SignalNametagAdded.Connect(Add, this);
+			Nametags.SignalNametagRemoved.Connect(Add, this);
+			Nametags.SignalNametagUpdated.Connect(Add, this);
+			Nametags.RefreshNametags();
+		}else{
+			m_swfRoot.onEnterFrame = undefined;
+			Nametags.SignalNametagAdded.Disconnect(Add, this);
+			Nametags.SignalNametagRemoved.Disconnect(Add, this);
+			Nametags.SignalNametagUpdated.Disconnect(Add, this);
+		}
+		
+	}
+    private function EnabledPlayfield(): Boolean {
+        return Utils.Contains(EnabledZones, Character.GetClientCharacter().GetPlayfieldID());
 	}
 
 	private function OnFrame() {
 		for (var i in m_dynels) {
 			var dynel:Dynel = m_dynels[i];
 			if (dynel.IsDead() || !dynel.GetDistanceToPlayer()){
-				Remove(dynel.GetID());
-				continue;
+				Remove(dynel);
+				return;
 			}
 			
 			var waypoint/*:ScreenWaypoint*/ = _root.waypoints.m_RenderedWaypoints[dynel.GetID()];
@@ -107,21 +121,10 @@ class fox.KrampusTracker.KrampusTracker {
 		}
 	}
 
-	private function Remove(id:ID32) {
-		for (var i in m_dynels){
-			if (m_dynels[i].GetID() == id){
-				Utils.Remove(m_dynels, m_dynels[i]);
-				delete _root.waypoints.m_CurrentPFInterface.m_Waypoints[id.toString];
-				_root.waypoints.m_CurrentPFInterface.SignalWaypointRemoved.Emit(id.toString());
-				break;
-			}
-		}
-	}
-	
-	private function PlayFieldChanged() {
-		for (var i in m_dynels) {
-			Remove(m_dynels[i].GetID());
-		}
+	private function Remove(dynel:Dynel) {
+		Utils.Remove(m_dynels, dynel);
+		delete _root.waypoints.m_CurrentPFInterface.m_Waypoints[dynel.GetID().toString];
+		_root.waypoints.m_CurrentPFInterface.SignalWaypointRemoved.Emit(dynel.GetID().toString());
 	}
 
 }
